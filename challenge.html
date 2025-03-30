@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Choose a Challenge</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #d8daf0;
+    }
+
+    header, footer {
+      background-color: #d8daf0;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .school-logo {
+      height: 60px;
+    }
+
+    .avatar-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #cbd5e1;
+    }
+
+    .section {
+      padding: 2rem;
+      background-color: white;
+      margin: 1rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .challenge-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .challenge-buttons button {
+      padding: 0.8rem 1.5rem;
+      border: none;
+      background-color: #3b82f6;
+      color: white;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .challenge-viewer {
+      margin: 1rem 2rem;
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 12px;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .challenge-viewer img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 1rem;
+      border-radius: 12px;
+    }
+
+    .challenge-viewer input[type="text"] {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .challenge-viewer button {
+      background-color: #10b981;
+      color: white;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #475569;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img id="student-avatar" class="avatar-img" src="" alt="Avatar" />
+    <div>
+      <img src="school-logo.png" class="school-logo" alt="School Logo" />
+      <h2>Summer Reading Program</h2>
+    </div>
+    <div id="student-info">Loading...</div>
+  </header>
+
+  <section class="section">
+    <h2>🟢 Easy Challenges (2 points)</h2>
+    <div class="challenge-buttons" id="easy-challenges"></div>
+  </section>
+
+  <section class="section">
+    <h2>🟠 Medium Challenges (3 points)</h2>
+    <div class="challenge-buttons" id="medium-challenges"></div>
+  </section>
+
+  <section class="section">
+    <h2>🔴 Hard Challenges (5 points)</h2>
+    <div class="challenge-buttons" id="hard-challenges"></div>
+  </section>
+
+<div class="challenge-viewer" id="challengeViewer">
+  <div id="challengePreview"></div>
+  <input type="text" id="bookTitle" placeholder="Which book did you read?" />
+  <input type="text" id="projectLink" placeholder="Optional: Paste your Google Drive link" />
+  <button onclick="submitChallenge()">Submit Challenge</button>
+</div>
+
+  <footer>
+    © 2025 Summer Reading Challenge | SVIS Bangalore<br />
+    Built by Games For Ed & Studio Z by Abhijith
+  </footer>
+
+  <!-- Confetti Library -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const name = localStorage.getItem("studentName");
+    const code = localStorage.getItem("studentCode");
+
+    const badgeLogic = (books, points) => {
+      const earned = ["profile_created"];
+      if (books >= 1) earned.push("1book");
+      if (books >= 3) earned.push("3books");
+      if (books >= 5) earned.push("5books");
+      if (books >= 10) earned.push("10books");
+      if (books >= 15) earned.push("15books");
+      if (points >= 5) earned.push("5pts");
+      if (points >= 10) earned.push("10pts");
+      if (points >= 20) earned.push("20pts");
+      if (points >= 30) earned.push("30pts");
+      if (points >= 50) earned.push("50pts");
+      return earned.join(",");
+    };
+
+    const challengeData = {
+      "10-14": {
+        easy: [
+          { title: "Book Cover", description: "Design the cover of a book you read. Include the title, author, and a new illustration that represents the story." },
+          { title: "Character Trading Cards", description: "Create cards for 3–5 characters. Include their name, traits, and role in the story." }
+        ],
+        medium: [
+          { title: "Comic Summary", description: "Summarize your book in a 6-panel comic with captions and speech bubbles." },
+          { title: "Theme Collage", description: "Create a collage representing the book’s theme using images or drawings. Add a paragraph explaining your choices." }
+        ],
+        hard: [
+          { title: "Instagram Profile", description: "Design an Instagram profile for a main character. Include posts, captions, and comments." },
+          { title: "Alternate Ending", description: "Rewrite the ending of your book and explain how it changes the story." }
+        ]
+      },
+      "8-10": {
+        easy: [
+          { title: "Timeline", description: "Draw a timeline of the key events in your book." },
+          { title: "Setting Sketch", description: "Draw and describe where the story takes place." },
+          { title: "Story Letter", description: "Write a letter to a character in the book." }
+        ],
+        medium: [
+          { title: "Poem About Book", description: "Write a short poem about your favorite part or character." },
+          { title: "Creative Cover", description: "Design a new book cover showing the story’s mood." },
+          { title: "Top 5 Moments", description: "Make a list of 5 exciting or important moments and illustrate them." }
+        ],
+        hard: [
+          { title: "Map the Story", description: "Draw a map showing important locations in your book." },
+          { title: "TV Interview", description: "Pretend to interview a character. What would you ask?" },
+          { title: "Scene Rewrite", description: "Rewrite a scene from another character’s point of view." }
+        ]
+      },
+      "6-8": {
+        easy: [
+          { title: "Story Drawing", description: "Draw your favorite scene from the book and label the characters." },
+          { title: "My Book Puppet", description: "Make a puppet of the main character using socks, paper, or cloth." },
+          { title: "Animal Talk", description: "Pretend you’re the animal in the story and describe your day." }
+        ],
+        medium: [
+          { title: "Mini Poster", description: "Make a colorful poster of your book’s title, author, and theme." },
+          { title: "Book Box", description: "Decorate a box with items that represent the book’s plot and characters." },
+          { title: "Dress Up", description: "Dress like a character and describe yourself!" }
+        ],
+        hard: [
+          { title: "Picture Story", description: "Create a short 4-panel story inspired by your book." },
+          { title: "Toy Theater", description: "Use toys to act out a part of your book and take photos or a video." },
+          { title: "Voice Recording", description: "Record yourself reading your favorite part of the book." }
+        ]
+      }
+    };
+
+    async function loadStudentProfile() {
+      const res = await fetch(`https://sheetdb.io/api/v1/69xx977as40ax/search?sheet=AllStudentData&name=${encodeURIComponent(name)}&code=${encodeURIComponent(code)}`);
+      const data = await res.json();
+      const student = data[0];
+
+      document.getElementById("student-avatar").src = student.avatar;
+      document.getElementById("student-info").innerHTML = `${student.name} | Code: ${student.code}<br/>Age: ${student.age}`;
+      localStorage.setItem("studentAge", student.age);
+
+      const age = parseInt(student.age);
+      let group = "6-8";
+      if (age >= 10) group = "10-14";
+      else if (age >= 8) group = "8-10";
+
+      renderChallenges(challengeData[group]);
+    }
+
+    function renderChallenges(set) {
+      const fill = (lvl, id) => {
+        const el = document.getElementById(id);
+        el.innerHTML = "";
+        set[lvl].forEach((ch, i) => {
+          const btn = document.createElement("button");
+          btn.textContent = ch.title;
+          btn.onclick = () => showChallenge(lvl, i, ch.title, ch.description);
+          el.appendChild(btn);
+        });
+      };
+      fill("easy", "easy-challenges");
+      fill("medium", "medium-challenges");
+      fill("hard", "hard-challenges");
+    }
+
+    function showChallenge(level, index, title, desc) {
+      const viewer = document.getElementById("challengeViewer");
+      const preview = document.getElementById("challengePreview");
+      preview.innerHTML = `
+        <strong>${title}</strong><br>
+        <img src="challenges/${level}_${index + 1}.jpg" alt="${title}" />
+        <p><em>${desc}</em></p>
+      `;
+      viewer.dataset.level = level;
+      viewer.dataset.points = level === "easy" ? 2 : level === "medium" ? 3 : 5;
+      viewer.dataset.title = title;
+      viewer.style.display = "block";
+      viewer.scrollIntoView({ behavior: "smooth" });
+    }
+
+async function submitChallenge() {
+  const viewer = document.getElementById("challengeViewer");
+  const link = document.getElementById("projectLink").value.trim();
+  const bookTitle = document.getElementById("bookTitle").value.trim();
+  const points = parseInt(viewer.dataset.points);
+  const title = viewer.dataset.title;
+
+  if (!bookTitle) {
+    alert("Please enter the name of the book you read.");
+    return;
+  }
+
+  const res = await fetch(`https://sheetdb.io/api/v1/69xx977as40ax/search?sheet=AllStudentData&name=${encodeURIComponent(name)}&code=${encodeURIComponent(code)}`);
+  const data = await res.json();
+  if (!data.length) return alert("Student not found");
+
+  const student = data[0];
+  const newBooks = parseInt(student.books_read || "0") + 1;
+  const newPoints = parseInt(student.points || "0") + points;
+  const newBadges = badgeLogic(newBooks, newPoints);
+  const bookHistory = student.books_read_list ? student.books_read_list + "; " + bookTitle : bookTitle;
+
+  const updateRes = await fetch(`https://sheetdb.io/api/v1/69xx977as40ax/name/${student.name}?sheet=AllStudentData`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      data: {
+        books_read: newBooks,
+        points: newPoints,
+        badges_earned: newBadges,
+        last_submission: link || "",
+        books_read_list: bookHistory
+      }
+    })
+  });
+
+  if (updateRes.ok) {
+    confetti();
+    alert(`✅ Submitted: ${title} (${points} pts)\nBook: ${bookTitle}`);
+    viewer.style.display = "none";
+    document.getElementById("projectLink").value = "";
+    document.getElementById("bookTitle").value = "";
+    setTimeout(() => {
+      window.location.href = "home.html";
+    }, 3500);
+  } else {
+    alert("❌ Failed to update");
+  }
+}
+
+
+    loadStudentProfile();
+  </script>
+</body>
+</html>

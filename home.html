@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #d8daf0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #d8daf0;
+      flex-wrap: wrap;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-center {
+      text-align: center;
+      flex-grow: 1;
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 0.9rem;
+      color: #1e3a8a;
+    }
+
+    .avatar-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #cbd5e1;
+    }
+
+    .school-logo {
+      height: 60px;
+      margin-bottom: 0.3rem;
+    }
+
+    .logout-popup {
+      position: absolute;
+      top: 80px;
+      left: 20px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .welcome-section {
+      background-color: #db4c94;
+      padding: 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .welcome-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .welcome-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: white;
+      border: 4px solid white;
+    }
+
+    .greeting-text span {
+      display: block;
+      font-size: 1.2rem;
+    }
+
+    .greeting-text h2 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .submit-btn {
+      margin: 2rem auto;
+      text-align: center;
+    }
+
+    .submit-btn a {
+      background-color: #3b82f6;
+      color: white;
+      padding: 1rem 2rem;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+
+    .badges-section {
+      background-color: white;
+      margin: 1rem 2rem;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .badges-section h2 {
+      color: #1e3a8a;
+      margin-bottom: 1rem;
+    }
+
+    .badges-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .badge-img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .points-section {
+      background-color: #fff;
+      padding: 2rem;
+      margin: 2rem;
+      text-align: center;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .progress-map {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .checkpoint {
+      width: 50px;
+      height: 50px;
+      background-color: #e2e8f0;
+      color: #1e293b;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      position: relative;
+      font-size: 1rem;
+    }
+
+    .checkpoint.completed {
+      background-color: #60a5fa;
+      color: white;
+    }
+
+    .avatar-jump {
+      position: absolute;
+      top: -55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .avatar-jump img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid white;
+      box-shadow: 0 0 0 2px #1e3a8a;
+      animation: jump 1.5s infinite ease-in-out;
+    }
+
+    @keyframes jump {
+      0%, 100% {
+        transform: translate(-50%, 0);
+      }
+      50% {
+        transform: translate(-50%, -20px);
+      }
+    }
+
+    .milestone-hint {
+      font-size: 1rem;
+      color: #334155;
+      margin-top: 0.5rem;
+    }
+
+    .games-section {
+      background-color: #fff;
+      padding: 2rem;
+      margin: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      text-align: center;
+    }
+
+    .games-section h2 {
+      color: #1e3a8a;
+      margin-bottom: 1.5rem;
+    }
+
+    .games-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .game-card {
+      width: 150px;
+      padding: 1rem;
+      background-color: #f8fafc;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .game-card h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: #1e40af;
+    }
+
+    .game-button {
+      display: inline-block;
+      background-color: #10b981;
+      color: white;
+      padding: 0.5rem 1rem;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    footer {
+      background-color: #e0e7ff;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #475569;
+      margin-top: auto;
+    }
+
+#welcomeCharacter {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  animation: bounceIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+  0% { transform: translateY(50px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <img id="student-avatar" class="avatar-img" src="" alt="Avatar" onclick="toggleLogout()" />
+      <div id="logoutPopup" class="logout-popup">
+        <button onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <img src="school-logo.png" class="school-logo" alt="School Logo" />
+      <h1>Summer Reading Program</h1>
+    </div>
+
+    <div class="header-right">
+      <div id="student-info">Loading...</div>
+    </div>
+  </header>
+
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div class="welcome-card">
+      <img src="" id="greeting-avatar" alt="Avatar" />
+      <div class="greeting-text">
+        <span>Hello</span>
+        <h2 id="greeting-name">Anonymous</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- Submit Button -->
+  <div class="submit-btn">
+    <a href="challenge.html">📤 Submit a New Challenge</a>
+  </div>
+
+  <!-- Badges Section -->
+  <section class="badges-section">
+    <h2>🏅 Your Badges</h2>
+    <div class="badges-grid" id="badges-grid"></div>
+  </section>
+
+  <!-- Points Tracker -->
+  <section class="points-section">
+    <h2>🎯 Your Points Progress</h2>
+    <div id="progress-map" class="progress-map"></div>
+    <p id="next-milestone" class="milestone-hint"></p>
+  </section>
+
+  <!-- Games Section -->
+  <section class="games-section">
+    <h2>🎮 Fun Games to Play</h2>
+    <div class="games-grid">
+      <div class="game-card">
+        <h3>Game 1</h3>
+        <a href="#" target="_blank" class="game-button">Play Now</a>
+      </div>
+      <div class="game-card">
+        <h3>Game 2</h3>
+        <a href="#" target="_blank" class="game-button">Play Now</a>
+      </div>
+      <div class="game-card">
+        <h3>Game 3</h3>
+        <a href="#" target="_blank" class="game-button">Play Now</a>
+      </div>
+      <div class="game-card">
+        <h3>Game 4</h3>
+        <a href="#" target="_blank" class="game-button">Play Now</a>
+      </div>
+      <div class="game-card">
+        <h3>Game 5</h3>
+        <a href="#" target="_blank" class="game-button">Play Now</a>
+      </div>
+    </div>
+
+    <div id="welcomeCharacter" style="display:none;">
+  <img src="character/mascot.png" alt="Reading Buddy" style="width: 100px; float: left; margin-right: 1rem;" />
+  <div style="max-width: 300px;">
+    <p id="welcomeMessage" style="font-weight: bold;">Welcome message here</p>
+    <button onclick="dismissCharacter()">Got it!</button>
+  </div>
+</div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © 2025 Summer Reading Challenge | SVIS Bangalore<br />
+    Built by Games For Ed & Studio Z by Abhijith
+  </footer>
+
+  <script>
+    const studentName = localStorage.getItem("studentName");
+    const studentCode = localStorage.getItem("studentCode");
+
+    function toggleLogout() {
+      const popup = document.getElementById("logoutPopup");
+      popup.style.display = popup.style.display === "block" ? "none" : "block";
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "index.html";
+    }
+
+    async function loadStudentBasics() {
+      try {
+        const res = await fetch(`https://sheetdb.io/api/v1/69xx977as40ax/search?sheet=AllStudentData&name=${encodeURIComponent(studentName)}&code=${encodeURIComponent(studentCode)}`);
+        const data = await res.json();
+        const student = data[0];
+
+        document.getElementById("student-avatar").src = student.avatar;
+        document.getElementById("greeting-avatar").src = student.avatar;
+        document.getElementById("greeting-name").textContent = student.name;
+        document.getElementById("student-info").innerHTML = `
+          ${student.name} | Code: ${student.code}<br/>Age: ${student.age}
+        `;
+
+        // Badges
+        const earned = (student.badges_earned || "").split(",").map(b => b.trim());
+        const allBadges = [
+          "profile_created", "1book", "3books", "5books",
+          "10books", "15books", "5pts", "10pts", "20pts", "30pts", "50pts"
+        ];
+        const badgeGrid = document.getElementById("badges-grid");
+
+        allBadges.forEach(badge => {
+          const img = document.createElement("img");
+          img.className = "badge-img";
+          img.src = earned.includes(badge)
+            ? `badges/badge_${badge}.png`
+            : `badges/badge_locked.png`;
+          img.alt = badge;
+          badgeGrid.appendChild(img);
+        });
+
+        // Points Tracker
+        const points = parseInt(student.points || "0");
+        const mapContainer = document.getElementById("progress-map");
+        mapContainer.innerHTML = "";
+
+        const start = Math.max(0, points - 4);
+        const end = points + 4;
+
+        for (let i = start; i <= end; i++) {
+          const checkpoint = document.createElement("div");
+          checkpoint.className = "checkpoint";
+          if (i < points) checkpoint.classList.add("completed");
+          checkpoint.textContent = i;
+
+          if (i === points) {
+            const avatarHolder = document.createElement("div");
+            avatarHolder.className = "avatar-jump";
+            avatarHolder.innerHTML = `<img src="${student.avatar}" alt="avatar" />`;
+            checkpoint.appendChild(avatarHolder);
+          }
+
+          mapContainer.appendChild(checkpoint);
+        }
+
+        // Milestone Hint
+        const milestones = [5, 10, 20, 30, 50];
+        const nextMilestone = milestones.find(m => m > points);
+        const milestoneText = nextMilestone
+          ? `${nextMilestone - points} point(s) to your next milestone badge!`
+          : `You've hit the top milestone badge! 🎉`;
+        document.getElementById("next-milestone").textContent = milestoneText;
+
+      } catch (err) {
+        console.error("Student fetch failed", err);
+        document.getElementById("student-info").textContent = "Student info unavailable";
+      }
+    }
+
+    loadStudentBasics();
+
+function showWelcomeCharacter() {
+  if (!sessionStorage.getItem("seenWelcomeCharacter")) {
+    const name = localStorage.getItem("studentName") || "Reader";
+    document.getElementById("welcomeMessage").innerText =
+      `Hi ${name}! I'm here to cheer you on. Ready to read more and earn some badges?`;
+
+    document.getElementById("welcomeCharacter").style.display = "flex";
+    sessionStorage.setItem("seenWelcomeCharacter", "true");
+  }
+}
+
+function dismissCharacter() {
+  document.getElementById("welcomeCharacter").style.display = "none";
+}
+
+showWelcomeCharacter();
+    
+  </script>
+
+</body>
+</html>

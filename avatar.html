@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Your Avatar</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #d8daf0;
+      padding-bottom: 4rem;
+    }
+
+    header {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    header img {
+      max-height: 80px;
+    }
+
+    h1 {
+      margin: 0.5rem 0;
+      font-size: 2rem;
+      color: #0b1444;
+    }
+
+    .student-info {
+      text-align: right;
+      padding: 0 2rem;
+      font-size: 1rem;
+      color: #1e3a8a;
+    }
+
+    .age-selector {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .age-selector select {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+    }
+
+    .avatars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+    }
+
+    .avatar-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.2s;
+      cursor: pointer;
+      border: 4px solid transparent;
+    }
+
+    .avatar-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .avatar-card.selected {
+      border-color: #ffaa2b;
+    }
+
+    .avatar-card img {
+      height: 120px;
+      margin-bottom: 1rem;
+    }
+
+    .avatar-card p {
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .confirm-btn {
+      display: block;
+      margin: 2rem auto;
+      background-color: #ffaa2b;
+      color: white;
+      font-weight: bold;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+      .avatar-card img {
+        height: 100px;
+      }
+
+      .avatars-grid {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="school-logo.png" alt="School Logo" />
+    <h1>Summer Reading Program</h1>
+    <div class="student-info">
+      <span id="studentDetails"></span>
+    </div>
+  </header>
+
+  <div class="age-selector">
+    <label for="ageGroup"><strong>Select your age group:</strong></label><br />
+    <select id="ageGroup">
+      <option value="">-- Choose Age Group --</option>
+      <option value="6-8">6–8</option>
+      <option value="8-10">8–10</option>
+      <option value="10-14">10–14</option>
+    </select>
+  </div>
+
+  <div class="avatars-grid" id="avatarGrid">
+    <!-- Avatar cards will be injected here -->
+  </div>
+
+  <button class="confirm-btn" onclick="confirmChoice()">Confirm and Continue</button>
+
+  <script>
+    const avatarList = [
+      { id: "avatar1.png", name: "Explorer Ella", desc: "Loves reading adventure stories and discovering new worlds." },
+      { id: "avatar2.png", name: "Captain Kartik", desc: "Leads every book mission with courage and curiosity." },
+      { id: "avatar3.png", name: "Reader Rhea", desc: "Always has her nose in a book and her heart in a story." },
+      { id: "avatar4.png", name: "Detective Dev", desc: "Solves reading mysteries one clue at a time." },
+      { id: "avatar5.png", name: "Scholar Sana", desc: "Smart, thoughtful, and full of ideas from every book." },
+      { id: "avatar6.png", name: "Pilot Priya", desc: "Flies through pages like a true imagination explorer." },
+      { id: "avatar7.png", name: "Astronaut Aryan", desc: "Launches into stories that are out of this world!" },
+      { id: "avatar8.png", name: "Jungle Jay", desc: "Swings into nature tales and animal adventures." }
+    ];
+
+    const avatarGrid = document.getElementById("avatarGrid");
+    let selectedAvatar = null;
+
+    avatarList.forEach((avatar, index) => {
+      const card = document.createElement("div");
+      card.className = "avatar-card";
+      card.innerHTML = `
+        <img src="${avatar.id}" alt="${avatar.name}" />
+        <h4>${avatar.name}</h4>
+        <p>${avatar.desc}</p>
+      `;
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".avatar-card").forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selectedAvatar = avatar.id;  // This stores the image filename (e.g., avatar1.png)
+
+      });
+      avatarGrid.appendChild(card);
+    });
+
+    // Display student name/code
+    const studentName = localStorage.getItem("studentName");
+    const studentCode = localStorage.getItem("studentCode");
+    document.getElementById("studentDetails").textContent = `${studentName} | Code: ${studentCode}`;
+
+    // Confirm button handler
+    async function confirmChoice() {
+      const age = document.getElementById("ageGroup").value;
+
+      if (!selectedAvatar || !age) {
+        alert("Please select both an avatar and an age group.");
+        return;
+      }
+
+      try {
+        const updateUrl = `https://sheetdb.io/api/v1/69xx977as40ax/name/${encodeURIComponent(studentName)}?sheet=AllStudentData`;
+        const body = {
+          data: {
+            avatar: selectedAvatar,
+            age: age,
+            profile_created: "TRUE"
+          }
+        };
+
+        const res = await fetch(updateUrl, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+
+        if (res.ok) {
+          window.location.href = "home.html";
+        } else {
+          alert("Error saving your profile. Please try again.");
+        }
+      } catch (error) {
+        console.error("Update error:", error);
+        alert("Error connecting to server.");
+      }
+    }
+  </script>
+</body>
+</html>
